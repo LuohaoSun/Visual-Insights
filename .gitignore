@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+__version__.py
+
+# 虚拟环境
+venv/
+ENV/
+env/
+.env/
+
+# 深度学习相关
+*.h5
+*.hdf5
+*.pkl
+*.pth
+*.pt
+*.bin
+*.onnx
+*.tflite
+*.pb
+checkpoints/
+logs/
+runs/
+wandb/
+tensorboard/
+
+# 数据集（通常不建议提交到git）
+/data/
+datasets/
+raw_data/
+processed_data/
+*.csv
+*.json
+*.jsonl
+*.tsv
+*.txt
+*.zip
+*.tar
+*.gz
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IDE相关
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# ppt
+*.ppt
+*.pptx
+
+# word
+*.doc
+*.docx
+
