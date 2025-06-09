@@ -13,7 +13,6 @@ dependencies = [
   "matplotlib",
   "numpy>=2.0.0",
   "pandas>=2.0.0",
-  "SALib>=1.0.0",
   "shap>=0.2.0",
   "scikit_learn>=1.0.0",
   "xgboost>=2.0.0",
@@ -22,6 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["hatch", "ruff"]
+opt = ["SALib"]
 
 
 [tool.hatch.version]

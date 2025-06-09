@@ -2,15 +2,17 @@
 
 通用可视化和可解释性工具, 目标是在所有项目中应用, 避免重复造轮子.
 
-## 构建与安装
+## 安装
+
+```bash
+uv pip install https://github.com/LuohaoSun/Visual-Insights.git
+```
+
+## 构建
 
 ```bash
 hatch clean
 hatch build
-```
-
-```bash
-uv pip install xxx.whl
 ```
 
 ## 如何使用:
