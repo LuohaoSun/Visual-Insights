@@ -13,7 +13,7 @@ dependencies = [
   "matplotlib",
   "numpy>=2.0.0",
   "pandas>=2.0.0",
-  "shap>=0.2.0",
+  "shap>=0.47.0",
   "scikit_learn>=1.0.0",
   "xgboost>=2.0.0",
   "seaborn",
