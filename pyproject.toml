@@ -9,7 +9,7 @@ name = "visual_insights"
 readme = "README.md"
 requires-python = ">=3.10"
 
-dependencies = ["matplotlib", "numpy>=2.0.0", "pandas>=2.0.0", "seaborn"]
+dependencies = ["matplotlib", "numpy>=2.0.0", "pandas>=2.0.0", "seaborn", "joblib"]
 
 [project.optional-dependencies]
 dev = ["hatch", "ruff"]

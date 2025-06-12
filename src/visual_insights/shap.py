@@ -11,25 +11,41 @@ from typing import Any, Literal
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from joblib import Memory
 from matplotlib.figure import Figure
 
-from .utils.cache import explainer_cache, shap_values_cache
-from .utils.data_handlers import ArrayLike, ensure_numpy_array
+# from visual_insights.utils.cache import explainer_cache, shap_values_cache
+from visual_insights.utils.data_handlers import ArrayLike, ensure_numpy_array
+
+__all__ = [
+    "plot_shap_summary",
+    "plot_shap_dependence",
+    "plot_shap_waterfall",
+    "plot_shap_force",
+    "get_shap_values",
+]
 
 logger = logging.getLogger(__name__)
+memory = Memory(location=".joblib_cache/shap", verbose=0)
 
 # 尝试导入 SHAP，但如果不可用则不会失败
 try:
     import shap
+    from shap.explainers._explainer import Explainer
 
     SHAP_AVAILABLE = True
 except ImportError:
     SHAP_AVAILABLE = False
     logger.warning("SHAP library not found. SHAP visualization will not be available.")
 
+ModelTypeLiteral = Literal["sklearn", "xgboost", "torch"]
+ExplainerTypeLiteral = Literal["tree", "deep", "linear", "kernel"]
+
 
 def _create_cache_key(
-    model: Any, model_type: str | None, explainer_type: str | None
+    model: Any,
+    model_type: ModelTypeLiteral | None,
+    explainer_type: ExplainerTypeLiteral | None,
 ) -> str:
     """
     为模型创建唯一的缓存键
@@ -49,7 +65,7 @@ def _create_cache_key(
 
 
 def _create_data_cache_key(
-    explainer: Any, input_data: ArrayLike, output_dimension: int | None
+    explainer: Explainer, input_data: ArrayLike, output_dimension: int | None
 ) -> str:
     """
     为数据创建唯一的缓存键
@@ -73,7 +89,7 @@ def _create_data_cache_key(
     return "_".join(key_parts)
 
 
-def _detect_explainer_type(model: Any) -> Literal["tree", "deep", "linear", "kernel"]:
+def _detect_explainer_type(model: Any) -> ExplainerTypeLiteral:
     """
     检测适合模型的 SHAP 解释器类型
 
@@ -107,10 +123,10 @@ def _detect_explainer_type(model: Any) -> Literal["tree", "deep", "linear", "ker
 
 def _create_explainer(
     model: Any,
-    model_type: Literal["sklearn", "xgboost", "torch"] | None,
-    explainer_type: Literal["tree", "deep", "linear", "kernel"] | None,
+    model_type: ModelTypeLiteral | None,
+    explainer_type: ExplainerTypeLiteral | None,
     input_data: ArrayLike,
-) -> Any:
+) -> Explainer:
     """
     创建 SHAP 解释器
 
@@ -131,7 +147,7 @@ def _create_explainer(
         explainer_type = _detect_explainer_type(model)
 
     # 转换为 numpy 数组
-    X = ensure_numpy_array(input_data)
+    x = ensure_numpy_array(input_data)
 
     # 创建解释器
     if explainer_type == "tree":
@@ -140,17 +156,18 @@ def _create_explainer(
         else:
             return shap.TreeExplainer(model)
     elif explainer_type == "deep":
-        return shap.DeepExplainer(model, X[:100])  # 使用前100个样本作为背景
+        return shap.DeepExplainer(model, x[:100])  # 使用前100个样本作为背景
     elif explainer_type == "linear":
-        return shap.LinearExplainer(model, X)
+        return shap.LinearExplainer(model, x)
     elif explainer_type == "kernel":
-        return shap.KernelExplainer(model.predict, X[:100])  # 使用前100个样本作为背景
+        return shap.KernelExplainer(model.predict, x[:100])  # 使用前100个样本作为背景
     else:
         raise ValueError(f"Unknown explainer type: {explainer_type}")
 
 
+@memory.cache
 def _calculate_shap_values(
-    explainer: Any, input_data: ArrayLike, output_dimension: int | None = None
+    explainer: Explainer, input_data: ArrayLike, output_dimension: int | None = None
 ) -> Any:
     """
     计算 SHAP 值
@@ -167,10 +184,10 @@ def _calculate_shap_values(
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
     # 转换为 numpy 数组
-    X = ensure_numpy_array(input_data)
+    x = ensure_numpy_array(input_data)
 
     # 计算 SHAP 值
-    shap_values = explainer.shap_values(X)
+    shap_values = explainer.shap_values(x)  # type: ignore
 
     # 处理多输出情况
     if isinstance(shap_values, list) and output_dimension is not None:
@@ -186,13 +203,13 @@ def _calculate_shap_values(
     return shap_values
 
 
+@memory.cache
 def _get_explainer(
     model: Any,
     input_data: ArrayLike,
-    model_type: str | None = None,
-    explainer_type: str | None = None,
-    use_cache: bool = True,
-) -> Any:
+    model_type: Literal["sklearn", "xgboost", "torch"] | None = None,
+    explainer_type: Literal["tree", "deep", "linear", "kernel"] | None = None,
+) -> Explainer:
     """
     获取或创建 SHAP 解释器
 
@@ -209,28 +226,16 @@ def _get_explainer(
     if not SHAP_AVAILABLE:
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
-    if not use_cache:
-        return _create_explainer(model, model_type, explainer_type, input_data)
-
-    # 创建缓存键
-    cache_key = _create_cache_key(model, model_type, explainer_type)
-
-    # 检查缓存
-    explainer = explainer_cache.get(cache_key)
-    if explainer is not None:
-        return explainer
-
-    # 创建新的解释器并缓存
     explainer = _create_explainer(model, model_type, explainer_type, input_data)
-    explainer_cache.set(cache_key, explainer)
+
     return explainer
 
 
+@memory.cache
 def _get_shap_values(
-    explainer: Any,
+    explainer: Explainer,
     input_data: ArrayLike,
     output_dimension: int | None = None,
-    use_cache: bool = True,
 ) -> Any:
     """
     获取或计算 SHAP 值
@@ -247,28 +252,14 @@ def _get_shap_values(
     if not SHAP_AVAILABLE:
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
-    if not use_cache:
-        return _calculate_shap_values(explainer, input_data, output_dimension)
-
-    # 创建缓存键
-    cache_key = _create_data_cache_key(explainer, input_data, output_dimension)
-
-    # 检查缓存
-    shap_values = shap_values_cache.get(cache_key)
-    if shap_values is not None:
-        return shap_values
-
-    # 计算新的 SHAP 值并缓存
-    shap_values = _calculate_shap_values(explainer, input_data, output_dimension)
-    shap_values_cache.set(cache_key, shap_values)
-    return shap_values
+    return _calculate_shap_values(explainer, input_data, output_dimension)
 
 
 def plot_shap_summary(
     input: ArrayLike,
     model: Any,
-    model_type: str | None = None,
-    explainer_type: str | None = None,
+    model_type: ModelTypeLiteral | None = None,
+    explainer_type: ExplainerTypeLiteral | None = None,
     feature_names: list[str] | None = None,
     max_display: int = 20,
     plot_type: str = "dot",
@@ -302,10 +293,10 @@ def plot_shap_summary(
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
     # 获取 SHAP 解释器
-    explainer = _get_explainer(model, input, model_type, explainer_type, use_cache)
+    explainer = _get_explainer(model, input, model_type, explainer_type)
 
     # 计算 SHAP 值
-    shap_values = _get_shap_values(explainer, input, output_dimension, use_cache)
+    shap_values = _get_shap_values(explainer, input, output_dimension)
     print(f"shap_values: {shap_values.shape}")
 
     # 处理特征名称
@@ -364,8 +355,8 @@ def plot_shap_dependence(
     input: ArrayLike,
     model: Any,
     feature_idx: int | str,
-    model_type: str | None = None,
-    explainer_type: str | None = None,
+    model_type: ModelTypeLiteral | None = None,
+    explainer_type: ExplainerTypeLiteral | None = None,
     interaction_idx: int | str | Literal["auto"] = "auto",
     feature_names: list[str] | None = None,
     output_dimension: int | None = None,
@@ -398,10 +389,10 @@ def plot_shap_dependence(
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
     # 获取 SHAP 解释器
-    explainer = _get_explainer(model, input, model_type, explainer_type, use_cache)
+    explainer = _get_explainer(model, input, model_type, explainer_type)
 
     # 计算 SHAP 值
-    shap_values = _get_shap_values(explainer, input, output_dimension, use_cache)
+    shap_values = _get_shap_values(explainer, input, output_dimension)
 
     # 处理特征名称
     if isinstance(input, pd.DataFrame) and feature_names is None:
@@ -424,7 +415,8 @@ def plot_shap_dependence(
             interaction_idx = feature_names.index(interaction_idx)
         else:
             raise ValueError(
-                f"Interaction feature name '{interaction_idx}' not found in feature_names"
+                f"Interaction feature name '{interaction_idx}' \
+                    not found in feature_names"
             )
 
     # 创建图表
@@ -460,8 +452,8 @@ def plot_shap_waterfall(
     input: ArrayLike,
     model: Any,
     instance_idx: int = 0,
-    model_type: str | None = None,
-    explainer_type: str | None = None,
+    model_type: ModelTypeLiteral | None = None,
+    explainer_type: ExplainerTypeLiteral | None = None,
     feature_names: list[str] | None = None,
     output_dimension: int | None = None,
     title: str | None = None,
@@ -492,10 +484,10 @@ def plot_shap_waterfall(
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
     # 获取 SHAP 解释器
-    explainer = _get_explainer(model, input, model_type, explainer_type, use_cache)
+    explainer = _get_explainer(model, input, model_type, explainer_type)
 
     # 计算 SHAP 值
-    shap_values = _get_shap_values(explainer, input, output_dimension, use_cache)
+    shap_values = _get_shap_values(explainer, input, output_dimension)
 
     # 处理特征名称
     if isinstance(input, pd.DataFrame) and feature_names is None:
@@ -519,7 +511,7 @@ def plot_shap_waterfall(
     shap.plots.waterfall(
         shap.Explanation(
             values=instance_shap,
-            base_values=explainer.expected_value
+            base_values=explainer.expected_value  # type: ignore
             if hasattr(explainer, "expected_value")
             else 0,
             data=instance_value,
@@ -547,8 +539,8 @@ def plot_shap_waterfall(
 def get_shap_values(
     input: ArrayLike,
     model: Any,
-    model_type: str | None = None,
-    explainer_type: str | None = None,
+    model_type: ModelTypeLiteral | None = None,
+    explainer_type: ExplainerTypeLiteral | None = None,
     output_dimension: int | None = None,
     use_cache: bool = True,
 ) -> dict[str, Any]:
@@ -570,10 +562,10 @@ def get_shap_values(
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
     # 获取 SHAP 解释器
-    explainer = _get_explainer(model, input, model_type, explainer_type, use_cache)
+    explainer = _get_explainer(model, input, model_type, explainer_type)
 
     # 计算 SHAP 值
-    shap_values = _get_shap_values(explainer, input, output_dimension, use_cache)
+    shap_values = _get_shap_values(explainer, input, output_dimension)
 
     # 处理特征名称
     if isinstance(input, pd.DataFrame):
@@ -585,7 +577,7 @@ def get_shap_values(
 
     # 获取预期值（基准值）
     if hasattr(explainer, "expected_value"):
-        expected_value = explainer.expected_value
+        expected_value = explainer.expected_value  # type: ignore
     else:
         expected_value = 0
 
@@ -603,8 +595,8 @@ def plot_shap_force(
     input: ArrayLike,
     model: Any,
     instance_idx: int = 0,
-    model_type: str | None = None,
-    explainer_type: str | None = None,
+    model_type: ModelTypeLiteral | None = None,
+    explainer_type: ExplainerTypeLiteral | None = None,
     feature_names: list[str] | None = None,
     output_dimension: int | None = None,
     title: str | None = None,
@@ -635,10 +627,10 @@ def plot_shap_force(
         raise ImportError("SHAP library is required. Install with 'pip install shap'.")
 
     # 获取 SHAP 解释器
-    explainer = _get_explainer(model, input, model_type, explainer_type, use_cache)
+    explainer = _get_explainer(model, input, model_type, explainer_type)
 
     # 计算 SHAP 值
-    shap_values = _get_shap_values(explainer, input, output_dimension, use_cache)
+    shap_values = _get_shap_values(explainer, input, output_dimension)
 
     # 处理特征名称
     if isinstance(input, pd.DataFrame) and feature_names is None:
@@ -662,7 +654,7 @@ def plot_shap_force(
     shap.plots.force(
         shap.Explanation(
             values=instance_shap,
-            base_values=explainer.expected_value
+            base_values=explainer.expected_value  # type: ignore
             if hasattr(explainer, "expected_value")
             else 0,
             data=instance_value,
