@@ -4,7 +4,6 @@ SHAP 可视化和计算模块
 提供用于计算和可视化 SHAP 值的函数。
 """
 
-import hashlib
 import logging
 from typing import Any, Literal
 
@@ -14,7 +13,6 @@ import pandas as pd
 from joblib import Memory
 from matplotlib.figure import Figure
 
-# from visual_insights.utils.cache import explainer_cache, shap_values_cache
 from visual_insights.utils.data_handlers import ArrayLike, ensure_numpy_array
 
 __all__ = [
@@ -40,53 +38,6 @@ except ImportError:
 
 ModelTypeLiteral = Literal["sklearn", "xgboost", "torch"]
 ExplainerTypeLiteral = Literal["tree", "deep", "linear", "kernel"]
-
-
-def _create_cache_key(
-    model: Any,
-    model_type: ModelTypeLiteral | None,
-    explainer_type: ExplainerTypeLiteral | None,
-) -> str:
-    """
-    为模型创建唯一的缓存键
-
-    参数:
-        model: 模型
-        model_type: 模型类型
-        explainer_type: 解释器类型
-
-    返回:
-        缓存键
-    """
-    # 使用模型的内存地址作为唯一标识
-    model_id = str(id(model))
-    key_parts = [model_id, str(model_type), str(explainer_type)]
-    return "_".join(key_parts)
-
-
-def _create_data_cache_key(
-    explainer: Explainer, input_data: ArrayLike, output_dimension: int | None
-) -> str:
-    """
-    为数据创建唯一的缓存键
-
-    参数:
-        explainer: SHAP 解释器
-        input_data: 输入数据
-        output_dimension: 输出维度
-
-    返回:
-        缓存键
-    """
-    # 使用解释器的内存地址和数据的哈希值
-    explainer_id = str(id(explainer))
-
-    # 为数据创建哈希值
-    data_array = ensure_numpy_array(input_data)
-    data_hash = hashlib.md5(np.ascontiguousarray(data_array).tobytes()).hexdigest()
-
-    key_parts = [explainer_id, data_hash, str(output_dimension)]
-    return "_".join(key_parts)
 
 
 def _detect_explainer_type(model: Any) -> ExplainerTypeLiteral:
@@ -267,7 +218,6 @@ def plot_shap_summary(
     title: str | None = None,
     figsize: tuple[int, int] = (10, 6),
     show: bool = True,
-    use_cache: bool = True,
 ) -> Figure:
     """
     绘制 SHAP 摘要图
@@ -284,7 +234,6 @@ def plot_shap_summary(
         title: 图表标题
         figsize: 图表大小
         show: 是否立即显示图表
-        use_cache: 是否使用缓存
 
     返回:
         matplotlib Figure 对象
@@ -363,7 +312,6 @@ def plot_shap_dependence(
     title: str | None = None,
     figsize: tuple[int, int] = (10, 6),
     show: bool = True,
-    use_cache: bool = True,
 ) -> Figure:
     """
     绘制 SHAP 依赖图
@@ -380,7 +328,6 @@ def plot_shap_dependence(
         title: 图表标题
         figsize: 图表大小
         show: 是否立即显示图表
-        use_cache: 是否使用缓存
 
     返回:
         matplotlib Figure 对象
@@ -459,7 +406,6 @@ def plot_shap_waterfall(
     title: str | None = None,
     figsize: tuple[int, int] = (10, 6),
     show: bool = True,
-    use_cache: bool = True,
 ) -> Figure:
     """
     绘制 SHAP 瀑布图
@@ -475,7 +421,6 @@ def plot_shap_waterfall(
         title: 图表标题
         figsize: 图表大小
         show: 是否立即显示图表
-        use_cache: 是否使用缓存
 
     返回:
         matplotlib Figure 对象
@@ -542,7 +487,6 @@ def get_shap_values(
     model_type: ModelTypeLiteral | None = None,
     explainer_type: ExplainerTypeLiteral | None = None,
     output_dimension: int | None = None,
-    use_cache: bool = True,
 ) -> dict[str, Any]:
     """
     计算并返回 SHAP 值
@@ -553,7 +497,6 @@ def get_shap_values(
         model_type: 模型类型 ("sklearn", "xgboost", "torch" 等)
         explainer_type: SHAP 解释器类型 (tree, deep, linear, kernel)
         output_dimension: 输出维度（对于多输出模型）
-        use_cache: 是否使用缓存
 
     返回:
         包含 SHAP 值和相关信息的字典
@@ -602,7 +545,6 @@ def plot_shap_force(
     title: str | None = None,
     figsize: tuple[int, int] = (10, 3),
     show: bool = True,
-    use_cache: bool = True,
 ) -> Figure:
     """
     绘制 SHAP 力图
@@ -618,7 +560,6 @@ def plot_shap_force(
         title: 图表标题
         figsize: 图表大小
         show: 是否立即显示图表
-        use_cache: 是否使用缓存
 
     返回:
         matplotlib Figure 对象
