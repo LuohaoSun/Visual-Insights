@@ -7,6 +7,7 @@ VisualInsight: 一个数据和模型可视化模块
 from .box_plot import plot_binned_box_plot, plot_box_plot
 from .error import plot_actual_vs_predicted, plot_error_distribution, plot_residuals
 from .metrics import calculate_regression_metrics
+from .offset_map import plot_offset_map
 from .shap import (
     get_shap_values,
     plot_shap_dependence,
@@ -63,6 +64,8 @@ __all__ = [
     "plot_spatial_figures",
     "plot_spatial_values",
     "plot_spatial_texts",
+    # map
+    "plot_offset_map",
     # utils
     "clear_cache",
 ]
