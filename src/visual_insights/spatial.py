@@ -104,7 +104,7 @@ def plot_spatial_figures(
     return fig
 
 
-# --- Keep the other functions (plot_spatial_values, plot_spatial_strings) as they are ---
+# --- Keep the other functions (plot_spatial_values, plot_spatial_strings) as they are ---  # noqa: E501
 # (Assuming plot_spatial_values works as intended)
 
 
@@ -173,7 +173,7 @@ def plot_spatial_values(
     )
 
     # 添加colorbar
-    cbar = fig.colorbar(im, ax=ax)
+    cbar = fig.colorbar(im, ax=ax)  # noqa: F841
 
     # 设置坐标轴刻度
     ax.set_xticks(np.arange(len(unique_x)))
