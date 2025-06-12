@@ -6,7 +6,7 @@ SHAP 可视化和计算模块
 
 import hashlib
 import logging
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,7 +29,7 @@ except ImportError:
 
 
 def _create_cache_key(
-    model: Any, model_type: Optional[str], explainer_type: Optional[str]
+    model: Any, model_type: str | None, explainer_type: str | None
 ) -> str:
     """
     为模型创建唯一的缓存键
@@ -49,7 +49,7 @@ def _create_cache_key(
 
 
 def _create_data_cache_key(
-    explainer: Any, input_data: ArrayLike, output_dimension: Optional[int]
+    explainer: Any, input_data: ArrayLike, output_dimension: int | None
 ) -> str:
     """
     为数据创建唯一的缓存键
@@ -73,7 +73,7 @@ def _create_data_cache_key(
     return "_".join(key_parts)
 
 
-def _detect_explainer_type(model: Any) -> str:
+def _detect_explainer_type(model: Any) -> Literal["tree", "deep", "linear", "kernel"]:
     """
     检测适合模型的 SHAP 解释器类型
 
@@ -107,8 +107,8 @@ def _detect_explainer_type(model: Any) -> str:
 
 def _create_explainer(
     model: Any,
-    model_type: Optional[str],
-    explainer_type: Optional[str],
+    model_type: Literal["sklearn", "xgboost", "torch"] | None,
+    explainer_type: Literal["tree", "deep", "linear", "kernel"] | None,
     input_data: ArrayLike,
 ) -> Any:
     """
@@ -150,7 +150,7 @@ def _create_explainer(
 
 
 def _calculate_shap_values(
-    explainer: Any, input_data: ArrayLike, output_dimension: Optional[int] = None
+    explainer: Any, input_data: ArrayLike, output_dimension: int | None = None
 ) -> Any:
     """
     计算 SHAP 值
@@ -189,8 +189,8 @@ def _calculate_shap_values(
 def _get_explainer(
     model: Any,
     input_data: ArrayLike,
-    model_type: Optional[str] = None,
-    explainer_type: Optional[str] = None,
+    model_type: str | None = None,
+    explainer_type: str | None = None,
     use_cache: bool = True,
 ) -> Any:
     """
@@ -229,7 +229,7 @@ def _get_explainer(
 def _get_shap_values(
     explainer: Any,
     input_data: ArrayLike,
-    output_dimension: Optional[int] = None,
+    output_dimension: int | None = None,
     use_cache: bool = True,
 ) -> Any:
     """
@@ -267,14 +267,14 @@ def _get_shap_values(
 def plot_shap_summary(
     input: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
-    explainer_type: Optional[str] = None,
-    feature_names: Optional[List[str]] = None,
+    model_type: str | None = None,
+    explainer_type: str | None = None,
+    feature_names: list[str] | None = None,
     max_display: int = 20,
     plot_type: str = "dot",
-    output_dimension: Optional[int] = None,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    output_dimension: int | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show: bool = True,
     use_cache: bool = True,
 ) -> Figure:
@@ -363,14 +363,14 @@ def plot_shap_summary(
 def plot_shap_dependence(
     input: ArrayLike,
     model: Any,
-    feature_idx: Union[int, str],
-    model_type: Optional[str] = None,
-    explainer_type: Optional[str] = None,
-    interaction_idx: Union[int, str, Literal["auto"]] = "auto",
-    feature_names: Optional[List[str]] = None,
-    output_dimension: Optional[int] = None,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    feature_idx: int | str,
+    model_type: str | None = None,
+    explainer_type: str | None = None,
+    interaction_idx: int | str | Literal["auto"] = "auto",
+    feature_names: list[str] | None = None,
+    output_dimension: int | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show: bool = True,
     use_cache: bool = True,
 ) -> Figure:
@@ -460,12 +460,12 @@ def plot_shap_waterfall(
     input: ArrayLike,
     model: Any,
     instance_idx: int = 0,
-    model_type: Optional[str] = None,
-    explainer_type: Optional[str] = None,
-    feature_names: Optional[List[str]] = None,
-    output_dimension: Optional[int] = None,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    model_type: str | None = None,
+    explainer_type: str | None = None,
+    feature_names: list[str] | None = None,
+    output_dimension: int | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show: bool = True,
     use_cache: bool = True,
 ) -> Figure:
@@ -547,11 +547,11 @@ def plot_shap_waterfall(
 def get_shap_values(
     input: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
-    explainer_type: Optional[str] = None,
-    output_dimension: Optional[int] = None,
+    model_type: str | None = None,
+    explainer_type: str | None = None,
+    output_dimension: int | None = None,
     use_cache: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     计算并返回 SHAP 值
 
@@ -603,12 +603,12 @@ def plot_shap_force(
     input: ArrayLike,
     model: Any,
     instance_idx: int = 0,
-    model_type: Optional[str] = None,
-    explainer_type: Optional[str] = None,
-    feature_names: Optional[List[str]] = None,
-    output_dimension: Optional[int] = None,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 3),
+    model_type: str | None = None,
+    explainer_type: str | None = None,
+    feature_names: list[str] | None = None,
+    output_dimension: int | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 3),
     show: bool = True,
     use_cache: bool = True,
 ) -> Figure:

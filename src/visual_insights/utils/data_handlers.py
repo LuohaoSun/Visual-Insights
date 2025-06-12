@@ -4,48 +4,50 @@
 提供数据预处理、转换和验证功能。
 """
 
-from typing import Any, List, Optional, Sequence, Tuple, Union, cast
+import logging
+from collections.abc import Sequence
+from typing import Any, cast
+
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
-import logging
 
 logger = logging.getLogger(__name__)
 
 # 类型别名
-ArrayLike = Union[NDArray[Any], pd.DataFrame, pd.Series]
-FeatureNames = List[str]
-TargetNames = List[str]
+ArrayLike = NDArray | pd.DataFrame | pd.Series
+FeatureNames = list[str]
+TargetNames = list[str]
 
 
 def ensure_numpy_array(data: ArrayLike) -> NDArray[Any]:
     """
     将输入数据转换为 numpy 数组
-    
+
     参数:
         data: 输入数据，可以是 numpy 数组、pandas DataFrame 或 Series
-        
+
     返回:
         numpy 数组
     """
-    if isinstance(data, (pd.DataFrame, pd.Series)):
+    if isinstance(data, pd.DataFrame | pd.Series):
         return data.to_numpy()
     return np.asarray(data)
 
 
 def handle_feature_names(
     data: ArrayLike,
-    feature_names: Optional[Sequence[str]] = None,
-    prefix: str = "Feature"
+    feature_names: Sequence[str] | None = None,
+    prefix: str = "Feature",
 ) -> FeatureNames:
     """
     提取或生成特征名称
-    
+
     参数:
         data: 输入数据
         feature_names: 显式指定的特征名称（可选）
         prefix: 自动生成的特征名称前缀
-        
+
     返回:
         特征名称列表
     """
@@ -55,24 +57,24 @@ def handle_feature_names(
         return list(feature_names)
     else:
         # 生成默认特征名称
-        if hasattr(data, 'shape') and len(cast(Sequence[int], data.shape)) > 1:
-            return [f"{prefix}{i}" for i in range(cast(Tuple[int, ...], data.shape)[1])]
+        if hasattr(data, "shape") and len(data.shape) > 1:
+            return [f"{prefix}{i}" for i in range(data.shape[1])]
         return [f"{prefix}0"]
 
 
 def handle_target_names(
     data: ArrayLike,
-    target_names: Optional[Sequence[str]] = None,
-    prefix: str = "Target"
+    target_names: Sequence[str] | None = None,
+    prefix: str = "Target",
 ) -> TargetNames:
     """
     提取或生成目标变量名称
-    
+
     参数:
         data: 输入数据
         target_names: 显式指定的目标变量名称（可选）
         prefix: 自动生成的目标变量名称前缀
-        
+
     返回:
         目标变量名称列表
     """
@@ -84,25 +86,26 @@ def handle_target_names(
         return list(target_names)
     else:
         # 生成默认目标变量名称
-        if hasattr(data, 'shape') and len(cast(Sequence[int], data.shape)) > 1 and cast(Tuple[int, ...], data.shape)[1] > 1:
-            return [f"{prefix}{i}" for i in range(cast(Tuple[int, ...], data.shape)[1])]
+        if (
+            hasattr(data, "shape")
+            and len(cast(Sequence[int], data.shape)) > 1
+            and cast(tuple[int, ...], data.shape)[1] > 1
+        ):
+            return [f"{prefix}{i}" for i in range(cast(tuple[int, ...], data.shape)[1])]
         return [f"{prefix}"]
 
 
-def extract_dimension(
-    data: ArrayLike,
-    dimension: Optional[int] = None
-) -> NDArray[Any]:
+def extract_dimension(data: ArrayLike, dimension: int | None = None) -> NDArray[Any]:
     """
     从多维数据中提取特定维度
-    
+
     参数:
         data: 输入数据
         dimension: 要提取的维度（可选）
-        
+
     返回:
         提取的数据，作为 numpy 数组
-        
+
     异常:
         ValueError: 如果维度无效
     """
@@ -114,25 +117,27 @@ def extract_dimension(
     if data_array.ndim > 1 and dimension < data_array.shape[1]:
         return data_array[:, dimension]
 
-    raise ValueError(f"Invalid dimension {dimension} for data with shape {data_array.shape}")
+    raise ValueError(
+        f"Invalid dimension {dimension} for data with shape {data_array.shape}"
+    )
 
 
 def prepare_data_pair(
     input_data: ArrayLike,
     target_data: ArrayLike,
-    output_dimension: Optional[int] = None
-) -> Tuple[NDArray[Any], NDArray[Any]]:
+    output_dimension: int | None = None,
+) -> tuple[NDArray[Any], NDArray[Any]]:
     """
     准备一对输入和输出数据用于分析
-    
+
     参数:
         input_data: 输入特征
         target_data: 目标值
         output_dimension: 要提取的特定输出维度（可选）
-        
+
     返回:
         (input_array, target_array) 元组，均为 numpy 数组
-        
+
     异常:
         ValueError: 如果数据形状不兼容
     """
@@ -150,7 +155,8 @@ def prepare_data_pair(
     # 检查形状兼容性
     if input_array.shape[0] != target_array.shape[0]:
         raise ValueError(
-            f"Input and target have incompatible shapes: {input_array.shape} vs {target_array.shape}"
+            f"Input and target have incompatible shapes: \
+                {input_array.shape} vs {target_array.shape}"
         )
 
     return input_array, target_array

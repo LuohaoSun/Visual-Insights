@@ -9,19 +9,11 @@ name = "visual_insights"
 readme = "README.md"
 requires-python = ">=3.10"
 
-dependencies = [
-  "matplotlib",
-  "numpy>=2.0.0",
-  "pandas>=2.0.0",
-  "shap>=0.47.0",
-  "scikit_learn>=1.0.0",
-  "xgboost>=2.0.0",
-  "seaborn",
-]
+dependencies = ["matplotlib", "numpy>=2.0.0", "pandas>=2.0.0", "seaborn"]
 
 [project.optional-dependencies]
 dev = ["hatch", "ruff"]
-opt = ["SALib"]
+all = ["SALib", "shap", "scikit_learn", "xgboost"]
 
 
 [tool.hatch.version]

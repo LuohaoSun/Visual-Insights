@@ -8,13 +8,6 @@
 uv pip install https://github.com/LuohaoSun/Visual-Insights.git
 ```
 
-## 构建
-
-```bash
-hatch clean
-hatch build
-```
-
 ## 如何使用:
 
 ```python
@@ -23,4 +16,15 @@ import visual_insights as vi
 actual = ...
 predicted = ...
 vi.plot_actual_vs_predicted(actual, predicted)
+```
+
+## 开发
+
+大量使用 AI 生成, 无开发文档.
+
+## 构建
+
+```bash
+hatch clean
+hatch build
 ```
