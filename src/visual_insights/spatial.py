@@ -5,31 +5,33 @@
 """
 
 import io
-from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from matplotlib.figure import Figure
 
-# 类型别名
-CoordinatePair = Tuple[float, float]
-FigureDict = Dict[CoordinatePair, Figure]
-ValueDict = Dict[CoordinatePair, float]
-StringDict = Dict[CoordinatePair, str]
+from visual_insights.typing import ArrayLike
 
 
 def plot_spatial_figures(
-    figures: List[Figure],
-    x_coords: Union[List[float], pd.Series],
-    y_coords: Union[List[float], pd.Series],
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (15, 12),
+    figures: list[Figure],
+    x_coords: ArrayLike,
+    y_coords: ArrayLike,
+    title: str | None = None,
+    figsize: tuple[int, int] = (15, 12),
     show: bool = True,
 ) -> Figure:
     """
-    Plot multiple figures at their spatial coordinates (original spacing logic).
+    绘制多个图形在空间坐标上的图
+
+    Args:
+        figures: 图形列表
+        x_coords: X坐标(一维数组)
+        y_coords: Y坐标(一维数组)
+        title: 图表标题
+        figsize: 图表大小
+        show: 是否立即显示图表
     """
     if not figures:
         raise ValueError("Empty figures list provided")
@@ -107,21 +109,21 @@ def plot_spatial_figures(
 
 
 def plot_spatial_values(
-    values: Union[List[float], pd.Series],
-    x_coords: Union[List[float], pd.Series],
-    y_coords: Union[List[float], pd.Series],
-    cmap="coolwarm",
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (15, 12),
+    values: ArrayLike,
+    x_coords: ArrayLike,
+    y_coords: ArrayLike,
+    cmap: str = "coolwarm",
+    title: str | None = None,
+    figsize: tuple[int, int] = (15, 12),
     show: bool = True,
 ):
     """
     根据坐标-值字典绘制热力图
 
-    Parameters:
+    Args:
         values: 数值列表或Pandas系列
-        x_coords: X坐标列表或Pandas系列
-        y_coords: Y坐标列表或Pandas系列
+        x_coords: X坐标(一维数组)
+        y_coords: Y坐标(一维数组)
         figsize: 图形大小
         cmap: 颜色映射
         title: 图形标题
@@ -222,23 +224,25 @@ def plot_spatial_values(
 
 
 def plot_spatial_texts(
-    texts: Union[List[str], pd.Series],
-    x_coords: Union[List[float], pd.Series],
-    y_coords: Union[List[float], pd.Series],
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (15, 12),
+    texts: list[str],
+    x_coords: ArrayLike,
+    y_coords: ArrayLike,
+    title: str | None = None,
+    figsize: tuple[int, int] = (15, 12),
     fontsize: int = 10,
     show: bool = True,
 ) -> Figure:
     """
-    Plot strings at their spatial coordinates.
+    绘制字符串在空间坐标上的图
 
-    Parameters:
-        strings_dict: Dictionary mapping coordinate pairs (x, y) to strings
-        title: Main figure title
-        figsize: Size of the figure
-        fontsize: Base font size for the text
-        show: Whether to show the figure immediately
+    Args:
+        texts: 字符串列表
+        x_coords: X坐标(一维数组)
+        y_coords: Y坐标(一维数组)
+        title: 图表标题
+        figsize: 图表大小
+        fontsize: 字体大小
+        show: 是否立即显示图表
 
     Returns:
         Matplotlib figure
