@@ -136,7 +136,7 @@ def _create_explainer(
     # 创建解释器
     if explainer_type == "tree":
         if model_type and "xgb" in model_type.lower():
-            return shap.TreeExplainer(model, feature_perturbation="interventional")
+            return shap.TreeExplainer(model)
         else:
             return shap.TreeExplainer(model)
     elif explainer_type == "deep":
