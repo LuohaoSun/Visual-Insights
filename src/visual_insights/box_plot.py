@@ -1,12 +1,13 @@
-from typing import List, Optional, Tuple, Literal
+from typing import List, Literal, Optional, Tuple
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.figure import Figure
 from scipy import stats
-import seaborn as sns
 
-from .utils.data_handlers import ensure_numpy_array, ArrayLike
+from .utils.data_handlers import ArrayLike, ensure_numpy_array
 from .utils.visualization import create_figure
 
 # 类型别名

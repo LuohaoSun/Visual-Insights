@@ -4,23 +4,26 @@
 提供用于可视化模型误差和预测的函数。
 """
 
-from typing import Optional, Tuple
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 
-from .statistical import plot_distribution
-from .utils.data_handlers import ArrayLike, ensure_numpy_array
-from .utils.visualization import add_stats_textbox, create_figure, set_equal_axes
+from visual_insights.statistical import plot_distribution
+from visual_insights.typing import ArrayLike
+from visual_insights.utils.data_handlers import ensure_numpy_array
+from visual_insights.utils.visualization import (
+    add_stats_textbox,
+    create_figure,
+    set_equal_axes,
+)
 
 
 def plot_error_distribution(
     input: ArrayLike,
     target: ArrayLike,
     bins: int = 30,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show_cdf: bool = False,
     show: bool = True,
 ) -> Figure:
@@ -62,8 +65,8 @@ def plot_error_distribution(
 def plot_residuals(
     input: ArrayLike,
     target: ArrayLike,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show: bool = True,
 ) -> Figure:
     """
@@ -119,11 +122,11 @@ def plot_residuals(
 def plot_actual_vs_predicted(
     input: ArrayLike,
     target: ArrayLike,
-    title: Optional[str] = None,
+    title: str | None = None,
     colorful: bool = False,
-    figsize: Tuple[int, int] = (10, 6),
-    min_val: Optional[float] = None,
-    max_val: Optional[float] = None,
+    figsize: tuple[int, int] = (10, 6),
+    min_val: float | None = None,
+    max_val: float | None = None,
     show: bool = True,
 ) -> Figure:
     """
