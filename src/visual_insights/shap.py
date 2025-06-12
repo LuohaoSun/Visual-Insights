@@ -25,7 +25,7 @@ __all__ = [
 ]
 
 logger = logging.getLogger(__name__)
-memory = Memory(location=".joblib_cache/shap", verbose=0)
+memory = Memory(location=".cache/shap", verbose=0)
 
 # 尝试导入 SHAP，但如果不可用则不会失败
 try:
