@@ -78,7 +78,7 @@ def _create_explainer(
     model_type: ModelTypeLiteral | None,
     explainer_type: ExplainerTypeLiteral | None,
     input_data: ArrayLike,
-) -> Explainer:
+) -> "Explainer":
     """
     创建 SHAP 解释器
 
@@ -119,7 +119,7 @@ def _create_explainer(
 
 @memory.cache
 def _calculate_shap_values(
-    explainer: Explainer, input_data: ArrayLike, output_dimension: int | None = None
+    explainer: "Explainer", input_data: ArrayLike, output_dimension: int | None = None
 ) -> Any:
     """
     计算 SHAP 值
@@ -161,7 +161,7 @@ def _get_explainer(
     input_data: ArrayLike,
     model_type: Literal["sklearn", "xgboost", "torch"] | None = None,
     explainer_type: Literal["tree", "deep", "linear", "kernel"] | None = None,
-) -> Explainer:
+) -> "Explainer":
     """
     获取或创建 SHAP 解释器
 
@@ -185,7 +185,7 @@ def _get_explainer(
 
 @memory.cache
 def _get_shap_values(
-    explainer: Explainer,
+    explainer: "Explainer",
     input_data: ArrayLike,
     output_dimension: int | None = None,
 ) -> Any:
