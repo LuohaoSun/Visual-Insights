@@ -273,7 +273,12 @@ def plot_spatial_texts(
         ax.set_title(title, fontsize=14)
 
     # Create a blank canvas (imshow sets up axes correctly for grid)
-    ax.imshow(np.zeros(grid_shape), cmap="Greys", alpha=0)  # Use zeros for background
+    ax.imshow(
+        np.zeros(grid_shape),
+        cmap="Greys",
+        alpha=0,
+        aspect=grid_shape[1] / grid_shape[0],
+    )  # Use zeros for background
 
     # Add text to each cell
     for i in range(len(unique_y)):  # Grid row index (top is 0)
