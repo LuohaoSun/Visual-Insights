@@ -277,7 +277,7 @@ def plot_spatial_texts(
         np.zeros(grid_shape),
         cmap="Greys",
         alpha=0,
-        aspect=grid_shape[1] / grid_shape[0],
+        aspect=figsize[0] / figsize[1],
     )  # Use zeros for background
 
     # Add text to each cell
