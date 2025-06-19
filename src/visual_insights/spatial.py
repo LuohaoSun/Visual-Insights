@@ -113,6 +113,7 @@ def plot_spatial_values(
     x_coords: ArrayLike,
     y_coords: ArrayLike,
     cmap: str = "coolwarm",
+    values_range: tuple[float, float] | None = None,
     title: str | None = None,
     figsize: tuple[int, int] = (15, 12),
     show: bool = True,
@@ -127,6 +128,7 @@ def plot_spatial_values(
         figsize: 图形大小
         cmap: 颜色映射
         title: 图形标题
+        values_range: 指定颜色条的范围 (vmin, vmax)。如果为 None，则根据数据自动计算。
 
     Returns:
         matplotlib Figure对象
@@ -156,16 +158,19 @@ def plot_spatial_values(
     if title:
         ax.set_title(title, fontsize=14)
 
-    # Find min/max for text color normalization
-    valid_values = grid[~np.isnan(grid)]
-    if len(valid_values) > 0:
-        vmin = np.nanmin(grid)
-        vmax = np.nanmax(grid)
-        # Threshold for text color inversion
-        text_threshold = (vmax - vmin) / 2 + vmin
+    # Find min/max for text color normalization and colorbar range
+    if values_range:
+        vmin, vmax = values_range
     else:
-        vmin, vmax = 0, 1  # Default if no valid data
-        text_threshold = 0.5
+        valid_values = grid[~np.isnan(grid)]
+        if len(valid_values) > 0:
+            vmin = np.nanmin(grid)
+            vmax = np.nanmax(grid)
+        else:
+            vmin, vmax = 0, 1  # Default if no valid data
+
+    # Threshold for text color inversion
+    text_threshold = (vmax - vmin) / 2 + vmin
 
     # 创建热力图
     im = ax.imshow(
