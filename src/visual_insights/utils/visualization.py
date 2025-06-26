@@ -4,13 +4,14 @@
 提供创建图表、添加统计信息等通用可视化功能。
 """
 
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union, Mapping
-import numpy as np
-import pandas as pd
+from collections.abc import Mapping
+from typing import Literal, Union
+
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
+import pandas as pd
 import seaborn as sns
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from seaborn.matrix import ClusterGrid
 
 # 类型别名
@@ -19,11 +20,11 @@ StatValue = Union[float, str, int]
 
 
 def create_figure(
-    figsize: Optional[Tuple[int, int]] = None,
-    title: Optional[str] = None,
-    xlabel: Optional[str] = None,
-    ylabel: Optional[str] = None,
-) -> Tuple[Figure, Axes]:
+    figsize: tuple[int, int] | None = None,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+) -> tuple[Figure, Axes]:
     """
     创建具有通用设置的 matplotlib 图表
 
@@ -104,8 +105,8 @@ def add_stats_textbox(
 
 def plot_correlation_heatmap(
     corr_matrix: pd.DataFrame,
-    figsize: Optional[Tuple[int, int]] = None,
-    title: Optional[str] = None,
+    figsize: tuple[int, int] | None = None,
+    title: str | None = None,
     cmap: str = "seismic",
     annot: bool = False,
     cluster: bool = False,

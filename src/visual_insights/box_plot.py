@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Tuple
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,9 +21,9 @@ def plot_binned_box_plot(
     target: ArrayLike,
     n_bins: int = 10,
     bin_method: Literal["cut", "qcut"] = "cut",
-    feature_name: Optional[str] = None,
-    target_name: Optional[str] = None,
-    figsize: Optional[Tuple[int, int]] = None,
+    feature_name: str | None = None,
+    target_name: str | None = None,
+    figsize: tuple[int, int] | None = None,
     show: bool = True,
 ) -> Figure:
     """
@@ -232,9 +232,9 @@ def plot_binned_box_plot(
 
 def plot_box_plot(
     data: ArrayLike,
-    group_names: Optional[List[str]] = None,
-    title: Optional[str] = None,
-    figsize: Optional[Tuple[int, int]] = None,
+    group_names: list[str] | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] | None = None,
     show: bool = True,
 ) -> Figure:
     """创建箱线图，支持单变量或多变量分组，并自动添加ANOVA统计信息。

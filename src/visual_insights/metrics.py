@@ -1,4 +1,3 @@
-from typing import Dict
 
 import numpy as np
 
@@ -7,7 +6,7 @@ from .utils.data_handlers import ArrayLike, ensure_numpy_array
 
 def calculate_regression_metrics(
     input: ArrayLike, target: ArrayLike
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     计算预测值与真实值之间的误差
 

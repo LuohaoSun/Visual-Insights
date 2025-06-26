@@ -4,9 +4,9 @@
 提供缓存机制以避免重复计算耗时的操作，如 SHAP 值和 Sobol 指数计算。
 """
 
-from typing import Dict, Any, Optional
 import gc
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class Cache:
     """
     通用缓存管理类
     """
-    def __init__(self, name: str, max_size: Optional[int] = None):
+    def __init__(self, name: str, max_size: int | None = None):
         """
         初始化缓存
         
@@ -24,9 +24,9 @@ class Cache:
         """
         self.name = name
         self.max_size = max_size
-        self._cache: Dict[str, Any] = {}
-        self._access_count: Dict[str, int] = {}
-    
+        self._cache: dict[str, Any] = {}
+        self._access_count: dict[str, int] = {}
+
     def get(self, key: str, default: Any = None) -> Any:
         """
         获取缓存项
@@ -44,7 +44,7 @@ class Cache:
             return self._cache[key]
         logger.debug(f"Cache miss for {self.name}: {key}")
         return default
-    
+
     def set(self, key: str, value: Any) -> None:
         """
         设置缓存项
@@ -56,34 +56,34 @@ class Cache:
         # 如果达到最大大小，删除最少访问的项
         if self.max_size is not None and len(self._cache) >= self.max_size and key not in self._cache:
             self._evict_least_used()
-        
+
         self._cache[key] = value
         self._access_count[key] = 0
         logger.debug(f"Cache set for {self.name}: {key}")
-    
+
     def _evict_least_used(self) -> None:
         """删除最少使用的缓存项"""
         if not self._cache:
             return
-        
+
         # 找到访问次数最少的键
         min_key = min(self._access_count.items(), key=lambda x: x[1])[0]
-        
+
         # 删除该项
         del self._cache[min_key]
         del self._access_count[min_key]
         logger.debug(f"Cache evicted for {self.name}: {min_key}")
-    
+
     def clear(self) -> None:
         """清除所有缓存"""
         self._cache.clear()
         self._access_count.clear()
         logger.debug(f"Cache cleared for {self.name}")
-    
+
     def __contains__(self, key: str) -> bool:
         """检查键是否在缓存中"""
         return key in self._cache
-    
+
     def __len__(self) -> int:
         """返回缓存项数量"""
         return len(self._cache)
@@ -94,7 +94,7 @@ explainer_cache = Cache("explainer", max_size=10)
 shap_values_cache = Cache("shap_values", max_size=20)
 sobol_indices_cache = Cache("sobol_indices", max_size=10)
 
-def clear_cache(module: Optional[str] = None) -> None:
+def clear_cache(module: str | None = None) -> None:
     """
     清除缓存
     

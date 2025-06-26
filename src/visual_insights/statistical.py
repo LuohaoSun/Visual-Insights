@@ -4,7 +4,7 @@
 提供用于可视化统计检验结果的函数。
 """
 
-from typing import List, Literal, Optional, Tuple
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,7 +24,7 @@ TestType = Literal[
 
 def _calculate_test_statistic(
     x: np.ndarray, y: np.ndarray, test_type: TestType
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     计算统计检验结果
 
@@ -74,12 +74,12 @@ def plot_statistical_tests(
     input: ArrayLike,
     target: ArrayLike,
     test_type: TestType = "pearson",
-    feature_names: Optional[List[str]] = None,
+    feature_names: list[str] | None = None,
     target_name: str = "Target",
     n_features: int = 20,
     sort: bool = True,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show: bool = True,
 ) -> Figure:
     """
@@ -187,12 +187,12 @@ def plot_statistical_tests_heatmap(
     input: ArrayLike,
     target: ArrayLike,
     test_type: TestType = "pearson",
-    feature_names: Optional[List[str]] = None,
-    target_names: Optional[List[str]] = None,
-    figsize: Optional[Tuple[int, int]] = None,
+    feature_names: list[str] | None = None,
+    target_names: list[str] | None = None,
+    figsize: tuple[int, int] | None = None,
     annot: bool = False,
     cmap: str = "seismic",
-    title: Optional[str] = None,
+    title: str | None = None,
     show: bool = True,
 ) -> Figure:
     """
@@ -262,16 +262,16 @@ def plot_statistical_tests_heatmap(
 
 def plot_correlation_matrix(
     input: ArrayLike,
-    target: Optional[ArrayLike] = None,
-    input_feature_names: Optional[List[str]] = None,
-    target_feature_names: Optional[List[str]] = None,
+    target: ArrayLike | None = None,
+    input_feature_names: list[str] | None = None,
+    target_feature_names: list[str] | None = None,
     method: Literal["pearson", "spearman", "kendall"] = "pearson",
-    figsize: Optional[Tuple[int, int]] = None,
+    figsize: tuple[int, int] | None = None,
     cluster: bool = False,
     cmap: str = "seismic",
     annot: bool = False,
     abs_values: bool = False,
-    title: Optional[str] = None,
+    title: str | None = None,
     show: bool = True,
 ) -> Figure:
     """
@@ -379,12 +379,12 @@ def plot_correlation_matrix(
 def plot_scatter(
     input: ArrayLike,
     target: ArrayLike,
-    feature_name: Optional[str] = None,
-    target_name: Optional[str] = None,
-    title: Optional[str] = None,
-    figsize: Optional[Tuple[int, int]] = None,
-    xlim: Optional[Tuple[float, float]] = None,
-    ylim: Optional[Tuple[float, float]] = None,
+    feature_name: str | None = None,
+    target_name: str | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] | None = None,
+    xlim: tuple[float, float] | None = None,
+    ylim: tuple[float, float] | None = None,
     show_mean_lines: bool = True,
     show_linear_fit: bool = True,
     show_spearman: bool = True,
@@ -455,7 +455,7 @@ def plot_scatter(
     # Calculate means (needed for mean lines and potentially for other calculations)
     x_mean = np.mean(input_arr)
     y_mean = np.mean(target_arr)
-    
+
     # Plot mean lines if requested
     if show_mean_lines:
         ax.axvline(
@@ -501,13 +501,13 @@ def plot_scatter(
 
     ax.set_xlabel(_feature_name, fontsize=12)
     ax.set_ylabel(_target_name, fontsize=12)
-    
+
     # 设置标题，如果提供了自定义标题则使用，否则使用默认标题
     plot_title = title if title is not None else f"Scatter Plot: {_feature_name} vs {_target_name}"
     ax.set_title(plot_title, fontsize=14)
-    
+
     ax.grid(True, linestyle="--", alpha=0.7)
-    
+
     # Set axis limits if specified
     if xlim is not None:
         ax.set_xlim(xlim)
@@ -533,11 +533,11 @@ def plot_scatter(
 
 def plot_distribution(
     data: ArrayLike,
-    column_name: Optional[str] = None,
+    column_name: str | None = None,
     bins: int = 30,
-    figsize: Optional[Tuple[int, int]] = None,
-    xlim: Optional[Tuple[float, float]] = None,
-    title: Optional[str] = None,
+    figsize: tuple[int, int] | None = None,
+    xlim: tuple[float, float] | None = None,
+    title: str | None = None,
     show_cdf: bool = False,
     show: bool = True,
 ) -> Figure:
@@ -678,12 +678,12 @@ def plot_distribution(
 def plot_mutual_information(
     input: ArrayLike,
     target: ArrayLike,
-    feature_names: Optional[List[str]] = None,
+    feature_names: list[str] | None = None,
     target_name: str = "Target",
     n_features: int = 20,
     sort: bool = True,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     show: bool = True,
 ) -> Figure:
     """
@@ -703,7 +703,7 @@ def plot_mutual_information(
     返回：
         matplotlib Figure 对象
     """
-    from sklearn.feature_selection import mutual_info_regression, mutual_info_classif
+    from sklearn.feature_selection import mutual_info_classif, mutual_info_regression
 
     # 转换为 numpy 数组
     X = ensure_numpy_array(input)

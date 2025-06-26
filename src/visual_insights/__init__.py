@@ -4,6 +4,7 @@ VisualInsight: 一个数据和模型可视化模块
 提供了一系列函数用于可视化数据关系、模型性能和模型解释。
 """
 
+from .bar_chart import plot_bar_chart
 from .box_plot import plot_binned_box_plot, plot_box_plot
 from .error import plot_actual_vs_predicted, plot_error_distribution, plot_residuals
 from .metrics import calculate_regression_metrics
@@ -60,6 +61,8 @@ __all__ = [
     # box_plot
     "plot_binned_box_plot",
     "plot_box_plot",
+    # bar_chart
+    "plot_bar_chart",
     # spatial
     "plot_spatial_figures",
     "plot_spatial_values",

@@ -6,7 +6,7 @@ Sobol 可视化和计算模块
 
 import hashlib
 import logging
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,9 +35,9 @@ except ImportError:
 def _create_cache_key(
     model: Any,
     input_data: ArrayLike,
-    model_type: Optional[str],
+    model_type: str | None,
     n_samples: int,
-    output_dimension: Optional[int],
+    output_dimension: int | None,
 ) -> str:
     """
     为 Sobol 分析创建唯一的缓存键
@@ -72,7 +72,7 @@ def _create_cache_key(
 
 
 def _get_model_predict_function(
-    model: Any, model_type: Optional[str], output_dimension: Optional[int] = None
+    model: Any, model_type: str | None, output_dimension: int | None = None
 ):
     """
     获取模型的预测函数
@@ -135,12 +135,12 @@ def _get_model_predict_function(
 def _calculate_sobol_indices(
     input_data: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
+    model_type: str | None = None,
     n_samples: int = 1000,
-    output_dimension: Optional[int] = None,
-    feature_names: Optional[List[str]] = None,
+    output_dimension: int | None = None,
+    feature_names: list[str] | None = None,
     calc_second_order: bool = True,
-) -> Dict[str, np.ndarray]:
+) -> dict[str, np.ndarray]:
     """
     计算 Sobol 敏感性指数
 
@@ -215,13 +215,13 @@ def _calculate_sobol_indices(
 def _get_sobol_indices(
     input_data: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
+    model_type: str | None = None,
     n_samples: int = 1000,
-    output_dimension: Optional[int] = None,
-    feature_names: Optional[List[str]] = None,
+    output_dimension: int | None = None,
+    feature_names: list[str] | None = None,
     calc_second_order: bool = True,
     use_cache: bool = True,
-) -> Dict[str, np.ndarray]:
+) -> dict[str, np.ndarray]:
     """
     获取或计算 Sobol 敏感性指数
 
@@ -280,8 +280,8 @@ def _get_sobol_indices(
 
 def _rank_features_by_importance(
     indices: np.ndarray,
-    feature_names: List[str],
-    conf_intervals: Optional[np.ndarray] = None,
+    feature_names: list[str],
+    conf_intervals: np.ndarray | None = None,
     normalized: bool = True,
 ) -> pd.DataFrame:
     """
@@ -315,7 +315,7 @@ def _rank_features_by_importance(
 
 
 def _get_top_interactions(
-    S2: np.ndarray, feature_names: List[str], top_n: int = 10
+    S2: np.ndarray, feature_names: list[str], top_n: int = 10
 ) -> pd.DataFrame:
     """
     获取顶部交互
@@ -353,13 +353,13 @@ def _get_top_interactions(
 def get_sobol_indices(
     input: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
+    model_type: str | None = None,
     n_samples: int = 1000,
-    output_dimension: Optional[int] = None,
-    feature_names: Optional[List[str]] = None,
+    output_dimension: int | None = None,
+    feature_names: list[str] | None = None,
     calc_second_order: bool = True,
     use_cache: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     计算并返回 Sobol 敏感性指数
 
@@ -428,13 +428,13 @@ def get_sobol_indices(
 def plot_sobol_indices(
     input: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
+    model_type: str | None = None,
     n_samples: int = 1000,
     indices_type: Literal["S1", "ST"] = "ST",
-    output_dimension: Optional[int] = None,
-    feature_names: Optional[List[str]] = None,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 6),
+    output_dimension: int | None = None,
+    feature_names: list[str] | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
     sort_features: bool = True,
     show: bool = True,
     use_cache: bool = True,
@@ -538,12 +538,12 @@ def plot_sobol_indices(
 def plot_sobol_radar(
     input: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
+    model_type: str | None = None,
     n_samples: int = 1000,
-    output_dimension: Optional[int] = None,
-    feature_names: Optional[List[str]] = None,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (10, 8),
+    output_dimension: int | None = None,
+    feature_names: list[str] | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 8),
     include_first_order: bool = True,
     show: bool = True,
     use_cache: bool = True,
@@ -640,13 +640,13 @@ def plot_sobol_radar(
 def plot_sobol_interactions(
     input: ArrayLike,
     model: Any,
-    model_type: Optional[str] = None,
+    model_type: str | None = None,
     n_samples: int = 1000,
-    output_dimension: Optional[int] = None,
-    feature_names: Optional[List[str]] = None,
+    output_dimension: int | None = None,
+    feature_names: list[str] | None = None,
     top_n: int = 10,
-    title: Optional[str] = None,
-    figsize: Tuple[int, int] = (12, 10),
+    title: str | None = None,
+    figsize: tuple[int, int] = (12, 10),
     show: bool = True,
     use_cache: bool = True,
 ) -> Figure:
