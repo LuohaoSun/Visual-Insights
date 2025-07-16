@@ -452,14 +452,16 @@ def plot_scatter(
         label="Data points",  # Added label for legend
     )
 
-    # Calculate means (needed for mean lines and potentially for other calculations)
-    x_mean = np.mean(input_arr)
-    y_mean = np.mean(target_arr)
-
     # Plot mean lines if requested
     if show_mean_lines:
+        x_mean = np.mean(input_arr)
+        y_mean = np.mean(target_arr)
         ax.axvline(
-            x_mean, color="red", linestyle="--", linewidth=1, label=f"X Mean: {x_mean:.2f}"
+            x_mean,
+            color="red",
+            linestyle="--",
+            linewidth=1,
+            label=f"X Mean: {x_mean:.2f}",
         )
         ax.axhline(
             y_mean,
@@ -503,7 +505,11 @@ def plot_scatter(
     ax.set_ylabel(_target_name, fontsize=12)
 
     # 设置标题，如果提供了自定义标题则使用，否则使用默认标题
-    plot_title = title if title is not None else f"Scatter Plot: {_feature_name} vs {_target_name}"
+    plot_title = (
+        title
+        if title is not None
+        else f"Scatter Plot: {_feature_name} vs {_target_name}"
+    )
     ax.set_title(plot_title, fontsize=14)
 
     ax.grid(True, linestyle="--", alpha=0.7)
