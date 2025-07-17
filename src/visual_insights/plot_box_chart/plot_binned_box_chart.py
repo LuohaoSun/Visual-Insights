@@ -34,6 +34,7 @@ def plot_binned_box_chart(
     target: ArrayLike,
     n_bins: int = 10,
     bin_method: Literal["cut", "qcut"] = "cut",
+    show_anova: bool = False,
     title: str | None = None,
     input_name: str | None = None,
     target_name: str | None = None,
@@ -50,6 +51,7 @@ def plot_binned_box_chart(
         bin_method: 分箱方法
             - "cut": 等宽分箱, 默认
             - "qcut": 等频分箱
+        show_anova: 是否显示ANOVA分析结果
         title: 图表标题
         input_name: 横轴名称
         target_name: 纵轴名称
@@ -68,6 +70,7 @@ def plot_binned_box_chart(
 
     return _plot_box_from_dataframe(
         data=data_for_plotting,
+        show_anova=show_anova,
         title=title,
         input_name=final_input_name,
         target_name=final_target_name,

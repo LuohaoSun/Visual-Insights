@@ -1,42 +1,15 @@
+import warnings
+
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from visual_insights.common.to_numpy import parse_1darray
-from visual_insights.common.typing import ArrayLike
-
-
-def _prepare_dataframe_from_input_target(
-    input_data: ArrayLike,
-    target_data: list[ArrayLike] | np.ndarray,
-) -> pd.DataFrame:
-    """Converts input/target data into a single DataFrame for plotting."""
-    input_array = parse_1darray(input_data, parse_data_name=False)
-
-    if isinstance(target_data, list):
-        if len(target_data) != len(input_array):
-            raise ValueError(
-                "The length of 'input' must match the length of the 'target' list."
-            )
-        target_arrays = [parse_1darray(t, parse_data_name=False) for t in target_data]
-        return pd.concat(
-            [
-                pd.DataFrame(arr, columns=[name])
-                for arr, name in zip(target_arrays, input_array)
-            ],
-            axis=1,
-        )
-    else:
-        target_array = np.asarray(target_data)
-        if target_array.ndim != 2:
-            raise ValueError("If 'target' is not a list, it must be a 2D array.")
-        if input_array.shape[0] != target_array.shape[1]:
-            raise ValueError(
-                "The length of 'input' must match the number of columns in 'target'."
-            )
-        return pd.DataFrame(target_array, columns=input_array)
+try:
+    from scipy.stats import f_oneway
+except ImportError:
+    f_oneway = None
 
 
 def _convert_long_to_wide_for_boxplot(
@@ -60,17 +33,68 @@ def _convert_long_to_wide_for_boxplot(
     )
 
 
+def _annotate_ax_with_anova(ax: Axes, data: pd.DataFrame) -> None:
+    """
+    在给定的 Axes 上计算并标注 ANOVA 结果。
+    此函数会直接修改传入的 ax 对象。
+    """
+    if f_oneway is None:
+        warnings.warn(
+            "To show ANOVA results, 'scipy' must be installed. Skipping ANOVA."
+        )
+        return
+
+    if len(data.columns) < 2:
+        warnings.warn("ANOVA requires at least two groups. Skipping analysis.")
+        return
+
+    # 准备 ANOVA 输入数据：移除每个组中的 NaN 值
+    groups = [data[col].dropna() for col in data.columns]
+    valid_groups = [g for g in groups if len(g) >= 2]
+
+    if len(valid_groups) < 2:
+        warnings.warn(
+            "At least two groups need 2+ data points for ANOVA. Skipping analysis."
+        )
+        return
+
+    try:
+        f_stat, p_value = f_oneway(*valid_groups)
+
+        p_text = "p < 0.001" if p_value < 0.001 else f"p = {p_value:.3f}"
+        annotation = f"ANOVA: F={f_stat:.2f}, {p_text}"
+
+        ax.text(
+            0.98,
+            0.98,
+            annotation,
+            transform=ax.transAxes,
+            horizontalalignment="right",
+            verticalalignment="top",
+            fontsize=10,
+            bbox=dict(boxstyle="round,pad=0.3", fc="wheat", alpha=0.5),
+        )
+    except Exception as e:
+        warnings.warn(f"An error occurred during ANOVA calculation: {e}")
+
 def _plot_box_from_dataframe(
     data: pd.DataFrame,
     title: str | None,
     input_name: str | None,
     target_name: str | None,
     figsize: tuple[int, int],
+    show_anova: bool,
     show: bool,
 ) -> Figure:
-    """Plots a box chart from a pre-formatted DataFrame."""
+    """
+    从预格式化的 DataFrame 编排箱线图的绘制过程。
+    """
     fig, ax = plt.subplots(figsize=figsize)
+
     sns.boxplot(data=data, ax=ax)
+
+    if show_anova:
+        _annotate_ax_with_anova(ax, data)
 
     if len(data.columns) > 10:
         ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")

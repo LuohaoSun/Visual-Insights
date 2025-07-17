@@ -8,6 +8,7 @@ def plot_groupby_box_chart(
     data: pd.DataFrame,
     group_by: str | list[str],
     value_column: str,
+    show_anova: bool = False,
     title: str | None = None,
     input_name: str | None = None,
     target_name: str | None = None,
@@ -22,6 +23,7 @@ def plot_groupby_box_chart(
         data: 包含分组和数值的 DataFrame
         group_by: 分组列名
         value_column: 数值列名
+        show_anova: 是否显示ANOVA分析结果
         title: 图表标题
         figsize: 图表大小
         show: 是否立即显示图表
@@ -42,6 +44,7 @@ def plot_groupby_box_chart(
 
     return _plot_box_from_dataframe(
         data=data_for_plotting,
+        show_anova=show_anova,
         title=title,
         input_name=final_input_name,
         target_name=final_target_name,
