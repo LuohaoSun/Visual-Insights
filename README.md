@@ -20,7 +20,16 @@ vi.plot_actual_vs_predicted(actual, predicted)
 
 ## 开发
 
-大量使用 AI 生成, 无开发文档.
+大量使用 AI 生成, 目前正在重构中.
+
+### API 约定
+
+- 所有绘图函数统一以`plot_`开头, 并返回`Figure`对象
+- 数据相关数据参数命名方式:
+  - 如果需要同时传入横轴和纵轴数据, 则使用`input`和`target`作为参数名
+  - 如果只需要传入一个数据序列, 则使用`data`作为参数名
+- 图表相关参数命名: 统一使用`title`、`input_name`、`target_name`、`figsize`和`show`作为参数名
+- 图表相关参数置于函数参数列表的最后
 
 ## 构建
 

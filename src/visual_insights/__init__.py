@@ -5,10 +5,14 @@ VisualInsight: 一个数据和模型可视化模块
 """
 
 from .bar_chart import plot_bar_chart
-from .box_plot import plot_binned_box_plot, plot_box_plot
 from .error import plot_actual_vs_predicted, plot_error_distribution, plot_residuals
 from .metrics import calculate_regression_metrics
 from .offset_map import plot_offset_map
+from .plot_box_chart import (
+    plot_binned_box_chart,
+    plot_box_chart,
+    plot_groupby_box_chart,
+)
 from .shap import (
     get_shap_values,
     plot_shap_dependence,
@@ -59,8 +63,9 @@ __all__ = [
     "plot_distribution",
     "plot_mutual_information",
     # box_plot
-    "plot_binned_box_plot",
-    "plot_box_plot",
+    "plot_binned_box_chart",
+    "plot_box_chart",
+    "plot_groupby_box_chart",
     # bar_chart
     "plot_bar_chart",
     # spatial
