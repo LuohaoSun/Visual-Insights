@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.figure import Figure
 
-from .typing import ArrayLike
+from .common.typing import ArrayLike
 from .utils.data_handlers import ensure_numpy_array
 from .utils.visualization import create_figure
 

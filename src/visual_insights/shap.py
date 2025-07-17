@@ -13,7 +13,7 @@ import pandas as pd
 from joblib import Memory
 from matplotlib.figure import Figure
 
-from visual_insights.typing import ArrayLike
+from visual_insights.common.typing import ArrayLike
 from visual_insights.utils.data_handlers import ensure_numpy_array
 
 __all__ = [

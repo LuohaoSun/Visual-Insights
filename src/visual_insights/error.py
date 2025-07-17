@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib.figure import Figure
 
 from visual_insights.statistical import plot_distribution
-from visual_insights.typing import ArrayLike
+from visual_insights.common.typing import ArrayLike
 from visual_insights.utils.data_handlers import ensure_numpy_array
 from visual_insights.utils.visualization import (
     add_stats_textbox,

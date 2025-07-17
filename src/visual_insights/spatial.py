@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
 
-from visual_insights.typing import ArrayLike
+from visual_insights.common.typing import ArrayLike
 
 
 def plot_spatial_figures(
