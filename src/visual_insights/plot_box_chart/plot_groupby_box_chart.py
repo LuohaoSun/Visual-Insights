@@ -9,6 +9,7 @@ def plot_groupby_box_chart(
     group_by: str | list[str],
     value_column: str,
     show_anova: bool = False,
+    show_dist: bool = False,
     title: str | None = None,
     input_name: str | None = None,
     target_name: str | None = None,
@@ -45,6 +46,7 @@ def plot_groupby_box_chart(
     return _plot_box_from_dataframe(
         data=data_for_plotting,
         show_anova=show_anova,
+        show_dist=show_dist,
         title=title,
         input_name=final_input_name,
         target_name=final_target_name,

@@ -77,12 +77,14 @@ def _annotate_ax_with_anova(ax: Axes, data: pd.DataFrame) -> None:
     except Exception as e:
         warnings.warn(f"An error occurred during ANOVA calculation: {e}")
 
+
 def _plot_box_from_dataframe(
     data: pd.DataFrame,
     title: str | None,
     input_name: str | None,
     target_name: str | None,
     figsize: tuple[int, int],
+    show_dist: bool,
     show_anova: bool,
     show: bool,
 ) -> Figure:
@@ -91,7 +93,25 @@ def _plot_box_from_dataframe(
     """
     fig, ax = plt.subplots(figsize=figsize)
 
-    sns.boxplot(data=data, ax=ax)
+    if show_dist:
+        sns.violinplot(
+            data=data,
+            ax=ax,
+            color="lightblue",
+            inner=None,
+            linewidth=0,
+        )
+        sns.boxplot(
+            data=data,
+            ax=ax,
+            width=0.3,
+            boxprops={"facecolor": "white", "zorder": 10},
+            whiskerprops={"zorder": 10},
+            capprops={"zorder": 10},
+            medianprops={"zorder": 10},
+        )
+    else:
+        sns.boxplot(data=data, ax=ax)
 
     if show_anova:
         _annotate_ax_with_anova(ax, data)
@@ -106,6 +126,7 @@ def _plot_box_from_dataframe(
     if target_name:
         ax.set_ylabel(target_name)
 
+    # Finalize - 逻辑不变
     plt.tight_layout()
 
     if show:

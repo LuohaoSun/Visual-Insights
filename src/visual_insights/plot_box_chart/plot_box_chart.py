@@ -46,6 +46,7 @@ def plot_box_chart(
     *,
     data: pd.DataFrame,
     show_anova: bool = False,
+    show_dist: bool = False,
     title: str | None = None,
     input_name: str | None = None,
     target_name: str | None = None,
@@ -57,6 +58,7 @@ def plot_box_chart(
     Args:
         data: 数据 shape: (n_samples, n_features). 将使用列名作为横轴刻度.
         show_anova: 是否显示ANOVA分析结果
+        show_dist: 是否显示分布图
         title: 图表标题
         input_name: 横轴名称
         target_name: 纵轴名称
@@ -72,6 +74,7 @@ def plot_box_chart(
     input: ArrayLike,
     target: list[ArrayLike] | np.ndarray,
     show_anova: bool = False,
+    show_dist: bool = False,
     title: str | None = None,
     input_name: str | None = None,
     target_name: str | None = None,
@@ -88,6 +91,7 @@ def plot_box_chart(
         input_name: 横轴名称
         target_name: 纵轴名称
         show_anova: 是否显示ANOVA分析结果
+        show_dist: 是否显示分布图
         title: 图表标题
         figsize: 图表大小
         show: 是否立即显示图表
@@ -97,6 +101,7 @@ def plot_box_chart(
 
 def plot_box_chart(
     *,
+    show_dist: bool = False,
     show_anova: bool = False,
     title: str | None = None,
     input_name: str | None = None,
@@ -131,6 +136,7 @@ def plot_box_chart(
     return _plot_box_from_dataframe(
         data=data_for_plotting,
         show_anova=show_anova,
+        show_dist=show_dist,
         title=title,
         input_name=input_name,
         target_name=target_name,
