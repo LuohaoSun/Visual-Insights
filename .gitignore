@@ -67,6 +67,8 @@ processed_data/
 *.swp
 *.swo
 .DS_Store
+CLAUDE.md
+GEMINI.md
 
 # ppt
 *.ppt
