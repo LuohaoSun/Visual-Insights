@@ -13,6 +13,7 @@ from .plot_box_chart import (
     plot_box_chart,
     plot_groupby_box_chart,
 )
+from .scatter import plot_scatter
 from .shap import (
     get_shap_values,
     plot_shap_dependence,
@@ -31,7 +32,6 @@ from .statistical import (
     plot_correlation_matrix,
     plot_distribution,
     plot_mutual_information,
-    plot_scatter,
     plot_statistical_tests,
     plot_statistical_tests_heatmap,
 )
@@ -44,6 +44,8 @@ __all__ = [
     "plot_error_distribution",
     "plot_residuals",
     "plot_actual_vs_predicted",
+    # scatter
+    "plot_scatter",
     # shap
     "plot_shap_summary",
     "plot_shap_dependence",
