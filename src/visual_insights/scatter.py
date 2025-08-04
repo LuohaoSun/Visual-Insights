@@ -208,7 +208,7 @@ def plot_scatter(
     plot_title = (
         title
         if title is not None
-        else f"Scatter Plot: {_feature_name} vs {_target_name}"
+        else f"Scatter Plot: {_target_name} vs {_feature_name}"
     )
     ax.set_title(plot_title, fontsize=14)
 
